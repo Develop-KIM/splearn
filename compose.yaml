@@ -1,0 +1,11 @@
+services:
+  mysql:
+    container_name: 'splearn-mysql'
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=splearn'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=spring'
+    ports:
+      - '3308:3306'
