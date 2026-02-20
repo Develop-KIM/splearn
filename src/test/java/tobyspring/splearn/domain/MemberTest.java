@@ -1,24 +1,65 @@
 package tobyspring.splearn.domain;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MemberTest {
 
-    @DisplayName("회원을 생성한다.")
+    private static final String EMAIL = "kimdonghwan913@gmail.com";
+    private static final String NICKNAME = "monkey";
+    private static final String PASSWORD_HASH = "secret";
+
     @Test
     void createMember() {
-        // given
-        String email = "kimdonghwan913@gmail.com";
-        String nickname = "monkey";
-        String passwordHash = "secret";
+        Member member = new Member(EMAIL, NICKNAME, PASSWORD_HASH);
 
-        // when
-        Member member = new Member(email, nickname, passwordHash);
-
-        // then
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
+    }
+
+    @Test
+    void constructorNullCheck() {
+        assertThatThrownBy(() -> new Member(null, NICKNAME, PASSWORD_HASH))
+            .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void activate() {
+        Member member = new Member(EMAIL, NICKNAME, PASSWORD_HASH);
+
+        member.activate();
+
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+    }
+
+    @Test
+    void activateFail() {
+        Member member = new Member(EMAIL, NICKNAME, PASSWORD_HASH);
+        member.activate();
+
+        assertThatThrownBy(member::activate).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void deactivate() {
+        Member member = new Member(EMAIL, NICKNAME, PASSWORD_HASH);
+        member.activate();
+
+        member.deactivate();
+
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
+    }
+
+    @Test
+    void deactivateFail() {
+        Member member = new Member(EMAIL, NICKNAME, PASSWORD_HASH);
+
+        assertThatThrownBy(member::deactivate).isInstanceOf(IllegalStateException.class);
+
+        member.activate();
+        member.deactivate();
+
+        assertThatThrownBy(member::deactivate).isInstanceOf(IllegalStateException.class);
     }
 }
