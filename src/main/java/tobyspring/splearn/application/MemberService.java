@@ -1,8 +1,10 @@
 package tobyspring.splearn.application;
 
-import com.sun.jdi.request.DuplicateRequestException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import tobyspring.splearn.application.provided.MemberRegister;
 import tobyspring.splearn.application.required.EmailSender;
 import tobyspring.splearn.application.required.MemberRepository;
@@ -12,6 +14,8 @@ import tobyspring.splearn.domain.Member;
 import tobyspring.splearn.domain.MemberRegisterRequest;
 import tobyspring.splearn.domain.PasswordEncoder;
 
+@Validated
+@Transactional
 @RequiredArgsConstructor
 @Service
 public class MemberService implements MemberRegister {
@@ -21,7 +25,7 @@ public class MemberService implements MemberRegister {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member register(MemberRegisterRequest registerRequest) {
+    public Member register(@Valid MemberRegisterRequest registerRequest) {
         checkDuplicateEmail(registerRequest);
 
         Member member = Member.register(registerRequest, passwordEncoder);
