@@ -53,13 +53,13 @@ record MemberRegisterTest(
 
     @Test
     void memberRegisterRequestFail() {
-        extracted(new MemberRegisterRequest("kimdonghwan913@gmail.com", "monkeygardennnnnnnnnnnnnnnnnnnn", "secret"));
-        extracted(new MemberRegisterRequest("kimdonghwan913@gmail.com", "monk", "longsecret"));
-        extracted(new MemberRegisterRequest("kimdonghwan913gmail.com", "monkey", "secret"));
+        checkValidation(new MemberRegisterRequest("kimdonghwan913@gmail.com", "monkeygardennnnnnnnnnnnnnnnnnnn", "secret"));
+        checkValidation(new MemberRegisterRequest("kimdonghwan913@gmail.com", "monk", "longsecret"));
+        checkValidation(new MemberRegisterRequest("kimdonghwan913gmail.com", "monkey", "secret"));
 
     }
 
-    private void extracted(MemberRegisterRequest invalid) {
+    private void checkValidation(MemberRegisterRequest invalid) {
         assertThatThrownBy(() -> memberRegister.register(invalid))
                 .isInstanceOf(ConstraintViolationException.class);
     }

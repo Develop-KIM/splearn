@@ -11,7 +11,6 @@ import tobyspring.splearn.domain.MemberFixture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @Import(SplearnTestConfiguration.class)
@@ -21,7 +20,6 @@ record MemberFinderTest(
         MemberRegister memberRegister,
         EntityManager entityManager
 ) {
-
     @Test
     void find() {
         Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
