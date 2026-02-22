@@ -4,11 +4,13 @@ import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.Assert.state;
 
+@ToString(callSuper = true)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
