@@ -1,12 +1,6 @@
 package tobyspring.splearn.domain;
 
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,12 +12,7 @@ import static org.springframework.util.Assert.state;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Member {
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
-    @Id
-    private Long id;
-
-    @Embedded
+public class Member extends AbstractEntity {
     @NaturalId
     private Email email;
 
@@ -31,7 +20,6 @@ public class Member {
 
     private String passwordHash;
 
-    @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
     public static Member register(MemberRegisterRequest createRequest, PasswordEncoder passwordEncoder) {
