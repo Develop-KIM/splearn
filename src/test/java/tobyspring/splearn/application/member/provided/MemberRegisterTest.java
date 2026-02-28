@@ -45,7 +45,7 @@ record MemberRegisterTest(
 
     @Test
     void activate() {
-        Member member = resigterMember();
+        Member member = registerMember();
 
         member = memberRegister.activate(member.getId());
         entityManager.flush();
@@ -56,7 +56,7 @@ record MemberRegisterTest(
 
     @Test
     void deactivate() {
-        Member member = resigterMember();
+        Member member = registerMember();
 
         memberRegister.activate(member.getId());
         entityManager.flush();
@@ -70,7 +70,7 @@ record MemberRegisterTest(
 
     @Test
     void updateInfo() {
-        Member member = resigterMember();
+        Member member = registerMember();
 
         memberRegister.activate(member.getId());
         entityManager.flush();
@@ -85,13 +85,13 @@ record MemberRegisterTest(
 
     @Test
     void updateInfoFail() {
-        Member member = resigterMember();
+        Member member = registerMember();
         memberRegister.activate(member.getId());
         memberRegister.updateInfo(member.getId(),
                 new MemberInfoUpdateRequest("monkeygarden", "monkey", "secret")
         );
 
-        Member member2 = resigterMember("toby2@splearn.app");
+        Member member2 = registerMember("toby2@splearn.app");
         memberRegister.activate(member2.getId());
 
         entityManager.flush();
@@ -136,14 +136,14 @@ record MemberRegisterTest(
                 .isInstanceOf(ConstraintViolationException.class);
     }
 
-    private Member resigterMember() {
+    private Member registerMember() {
         Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
         entityManager.flush();
         entityManager.clear();
         return member;
     }
 
-    private Member resigterMember(String email) {
+    private Member registerMember(String email) {
         Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest(email));
         entityManager.flush();
         entityManager.clear();

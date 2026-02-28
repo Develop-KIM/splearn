@@ -44,6 +44,9 @@ dependencies {
 	testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+	testCompileOnly("org.projectlombok:lombok")
+	testAnnotationProcessor("org.projectlombok:lombok")
+
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	mockitoAgent("org.mockito:mockito-core:5.18.0") { isTransitive = false }
