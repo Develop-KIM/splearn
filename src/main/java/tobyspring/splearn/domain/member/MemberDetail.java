@@ -1,6 +1,5 @@
 package tobyspring.splearn.domain.member;
 
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import static java.util.Objects.requireNonNull;
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Entity
 public class MemberDetail extends AbstractEntity {
-    @Embedded
     private Profile profile;
 
     private String introduction;

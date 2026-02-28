@@ -10,6 +10,7 @@ import tobyspring.splearn.SplearnTestConfiguration;
 import tobyspring.splearn.domain.member.DuplicateEmailException;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberFixture;
+import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
 import tobyspring.splearn.domain.member.MemberRegisterRequest;
 import tobyspring.splearn.domain.member.MemberStatus;
 
@@ -43,14 +44,42 @@ record MemberRegisterTest(
 
     @Test
     void activate() {
-        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
-        entityManager.flush();
-        entityManager.clear();
+        Member member = resigterMember();
 
         member = memberRegister.activate(member.getId());
         entityManager.flush();
 
         assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVE);
+        assertThat(member.getDetail().getActivatedAt()).isNotNull();
+    }
+
+    @Test
+    void deactivate() {
+        Member member = resigterMember();
+
+        memberRegister.activate(member.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        member = memberRegister.deactivate(member.getId());
+
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
+        assertThat(member.getDetail().getDeactivatedAt()).isNotNull();
+    }
+
+    @Test
+    void updateInfo() {
+        Member member = resigterMember();
+
+        memberRegister.activate(member.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        member = memberRegister.updateInfo(member.getId(),
+                new MemberInfoUpdateRequest("monkeygarden", "monkey", "secret")
+        );
+
+        assertThat(member.getDetail().getProfile().address()).isEqualTo("monkey");
     }
 
     @Test
@@ -66,4 +95,10 @@ record MemberRegisterTest(
                 .isInstanceOf(ConstraintViolationException.class);
     }
 
+    private Member resigterMember() {
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+        entityManager.flush();
+        entityManager.clear();
+        return member;
+    }
 }
