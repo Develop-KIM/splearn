@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import tobyspring.splearn.SplearnTestConfiguration;
+import tobyspring.splearn.application.member.DuplicateProfileException;
 import tobyspring.splearn.domain.member.DuplicateEmailException;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberFixture;
@@ -83,6 +84,46 @@ record MemberRegisterTest(
     }
 
     @Test
+    void updateInfoFail() {
+        Member member = resigterMember();
+        memberRegister.activate(member.getId());
+        memberRegister.updateInfo(member.getId(),
+                new MemberInfoUpdateRequest("monkeygarden", "monkey", "secret")
+        );
+
+        Member member2 = resigterMember("toby2@splearn.app");
+        memberRegister.activate(member2.getId());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // member2는 기존의 member와 같은 프로필 주소를 사용할 수 없다.
+        assertThatThrownBy(() -> {
+            memberRegister.updateInfo(member2.getId(), new MemberInfoUpdateRequest("James", "monkey", "introduce"));
+        }).isInstanceOf(DuplicateProfileException.class);
+
+        // 다른 프로필 주소로는 변경 가능
+        memberRegister.updateInfo(member2.getId(),
+                new MemberInfoUpdateRequest("monkeygarden", "monkey1", "secret")
+        );
+
+        // 기존 프로필 주소를 바꾸는 것도 가능
+        memberRegister.updateInfo(member.getId(),
+                new MemberInfoUpdateRequest("monkeygarden", "monkey", "secret")
+        );
+
+        // 프로필 주소를 제거하는 것도 가능
+        memberRegister.updateInfo(member.getId(),
+                new MemberInfoUpdateRequest("monkeygarden", "", "secret")
+        );
+
+        // 프로필 주소 중복은 허용하지 않음
+        assertThatThrownBy(() -> {
+            memberRegister.updateInfo(member.getId(), new MemberInfoUpdateRequest("James", "monkey1", "introduce"));
+        }).isInstanceOf(DuplicateProfileException.class);
+    }
+
+    @Test
     void memberRegisterRequestFail() {
         checkValidation(new MemberRegisterRequest("kimdonghwan913@gmail.com", "monkeygardennnnnnnnnnnnnnnnnnnn", "secret"));
         checkValidation(new MemberRegisterRequest("kimdonghwan913@gmail.com", "monk", "longsecret"));
@@ -97,6 +138,13 @@ record MemberRegisterTest(
 
     private Member resigterMember() {
         Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+        entityManager.flush();
+        entityManager.clear();
+        return member;
+    }
+
+    private Member resigterMember(String email) {
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest(email));
         entityManager.flush();
         entityManager.clear();
         return member;
