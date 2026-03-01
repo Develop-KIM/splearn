@@ -20,11 +20,11 @@ public class ApiControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({DuplicateEmailException.class, DuplicateProfileException.class})
     public ProblemDetail emailExceptionHandler(DuplicateEmailException exception) {
-        return getProblemDetail(HttpStatus.CONFLICT, exception);
+        return getProblemDetail(exception);
     }
 
-    private static @NonNull ProblemDetail getProblemDetail(HttpStatus status, DuplicateEmailException exception) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, exception.getMessage());
+    private static @NonNull ProblemDetail getProblemDetail(DuplicateEmailException exception) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
 
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         problemDetail.setProperty("exception", exception.getClass().getSimpleName());
